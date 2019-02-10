@@ -4,6 +4,7 @@ const passport = require('passport');
 
 // by default, passport wants to create a cookie based session for this request -> so we turn it off with false since we're using JWT tokens
 const requireAuth = passport.authenticate('jwt', {session: false })
+const requireSignin = passport.authenticate('local', {session: false })
 
 module.exports = function(app){
   // add route handlers to express
@@ -11,6 +12,7 @@ module.exports = function(app){
     res.send({ hi: 'there' })
   })
 
+  app.post('/signin', requireSignin, Authentication.signup); // requireSignin acts as a kind of Middleware
   app.post('/signup', Authentication.signup);
 }
 

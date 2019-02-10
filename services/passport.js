@@ -5,7 +5,28 @@ const User = require('../models/user');
 const config = require('../config');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const LocalStrategy = require('passport-local');
 
+
+// Create Separate Local Strategy for a User Logging In -> separate goal from JWT token strategy of verifying whether a username / password has been used. Here we are verifying correctly logged in info
+const localOptions = { usernameField: 'email' } // LocalStrategy expects to get a username and password -> since we have an email instead of a username we specify to look at email
+const localLogin = new LocalStrategy({ localOptions }, function(email, password, done){
+  // Verify this username and password
+  User.fundOne({ email: email }, function(err, user){
+    if(err){ return done(err, false) }
+    if(!user){ done(null, user) }
+    // compare passwords between what the user entered and what was saved in the DB
+    // NOTE: the saved PW in the DB is the SALT + Hashed PW. We take the salt (encryption key) and use it to encrpyt the submitted password the user typed in
+    // NOTE: that will return a Hashed PW -> that we then compare to the DB saved Hashed PW
+    // NOTE: AT NO POINT ARE WE DECYPTING PASSWORDS
+    user.comparePassword(password, function(err, isMatch){
+      if(err){ return done(err) }
+      if(!isMatch){ return done(null, false) }
+
+      return done(null, user) // this 'done' CB supplied by passport assigns this to req.user so we can make use of it in 'controllers/authentication.js'
+    })
+  })
+})
 
 
 // Setup options for JWT Strategy
@@ -31,5 +52,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done){
   });
 });
 
+
 // Tell Passport to Use This Strategy
 passport.use(jwtLogin);
+passport.use(localLogin);
