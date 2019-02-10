@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 
 
 
-// DB Setup NOTE: internally this creates a new db inside of mongodb named 'auth'
+// DB Setup NOTE: internally this creates a new db inside of mongodb named 'authentication'
 mongoose.connect('mongodb://localhost:auth/authentication', {useNewUrlParser: true})
 
 
