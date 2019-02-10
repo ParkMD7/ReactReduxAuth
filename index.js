@@ -3,9 +3,13 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const http = require('http');
+const router = require('./router');
+const mongoose = require('mongoose');
 
-// user files
-const router = require('./router')
+
+
+// DB Setup NOTE: internally this creates a new db inside of mongodb named 'auth'
+mongoose.connect('mongodb://localhost:auth/authentication', {useNewUrlParser: true})
 
 
 // App Setup NOTE: morgan and bodyParser are middlewares in express -> any incoming request into our server will be passed into both of these by default via app.use
