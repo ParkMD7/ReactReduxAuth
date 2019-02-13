@@ -12,7 +12,7 @@ module.exports = function(app){
     res.send({ hi: 'there' })
   })
 
-  app.post('/signin', requireSignin, Authentication.signup); // requireSignin acts as a kind of Middleware
+  app.post('/signin', requireSignin, Authentication.signin); // requireSignin acts as a kind of Middleware
   app.post('/signup', Authentication.signup);
 }
 
